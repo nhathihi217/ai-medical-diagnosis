@@ -23,34 +23,10 @@ function Arrow({ className = "" }: { className?: string }) {
 }
 
 const features = [
-  {
-    number: "01",
-    icon: "◉",
-    title: "Phân tích CT hỗ trợ AI",
-    copy: "Tổ chức ảnh chụp và kết quả phân tích trong cùng một quy trình để đội ngũ y tế dễ dàng xem xét.",
-    tone: "mint",
-  },
-  {
-    number: "02",
-    icon: "⌕",
-    title: "Tra cứu kiến thức y khoa",
-    copy: "Tìm kiếm thông tin tham khảo có cấu trúc, hỗ trợ bác sĩ trong quá trình đánh giá lâm sàng.",
-    tone: "blue",
-  },
-  {
-    number: "03",
-    icon: "▤",
-    title: "Hồ sơ ca bệnh tập trung",
-    copy: "Theo dõi thông tin bệnh nhân, lịch sử ca và ghi chú chuyên môn trên một giao diện thống nhất.",
-    tone: "peach",
-  },
-  {
-    number: "04",
-    icon: "↗",
-    title: "Theo dõi và báo cáo",
-    copy: "Nắm bắt trạng thái xử lý, mức độ ưu tiên và hoạt động của hệ thống một cách trực quan.",
-    tone: "lavender",
-  },
+  { number: "01", icon: "◉", title: "Phân tích CT hỗ trợ AI", copy: "Tổ chức ảnh chụp và kết quả phân tích trong cùng một quy trình để đội ngũ y tế dễ dàng xem xét.", tone: "mint" },
+  { number: "02", icon: "⌕", title: "Tra cứu kiến thức y khoa", copy: "Tìm kiếm thông tin tham khảo có cấu trúc, hỗ trợ bác sĩ trong quá trình đánh giá lâm sàng.", tone: "blue" },
+  { number: "03", icon: "▤", title: "Hồ sơ ca bệnh tập trung", copy: "Theo dõi thông tin bệnh nhân, lịch sử ca và ghi chú chuyên môn trên một giao diện thống nhất.", tone: "peach" },
+  { number: "04", icon: "↗", title: "Theo dõi và báo cáo", copy: "Nắm bắt trạng thái xử lý, mức độ ưu tiên và hoạt động của hệ thống một cách trực quan.", tone: "lavender" },
 ];
 
 const steps = [
@@ -77,6 +53,9 @@ export default function HomePage({ onNavigate }: Props) {
           <button className="button button-primary header-cta" onClick={() => onNavigate("auth-doctor")}>
             Cổng bác sĩ <Arrow />
           </button>
+          <button className="button button-admin header-admin" onClick={() => onNavigate("auth-admin")}>
+            Cổng quản trị
+          </button>
         </div>
       </header>
 
@@ -84,7 +63,7 @@ export default function HomePage({ onNavigate }: Props) {
         <div className="hero-copy">
           <div className="eyebrow"><span className="eyebrow-dot" /> NỀN TẢNG HỖ TRỢ CHẨN ĐOÁN THẦN KINH</div>
           <h1>Thêm góc nhìn.<br /><span>Vững tâm</span> chăm sóc.</h1>
-          <p className="hero-description">NeuraScan AI hỗ trợ đội ngũ y tế tổ chức ca bệnh, tham khảo phân tích hình ảnh CT và theo dõi quy trình đánh giá — trong một không gian làm việc rõ ràng, dễ sử dụng.</p>
+          <p className="hero-description">NeuraScan AI hỗ trợ đội ngũ y tế tổ chức ca bệnh, tham khảo phân tích hình ảnh CT và theo dõi quy trình đánh giá — trong một không gian làm việc rõ ràng, tập trung.</p>
           <div className="hero-actions">
             <button className="button button-primary button-large" onClick={() => onNavigate("auth-doctor")}>Khám phá cổng bác sĩ <Arrow /></button>
             <a className="text-link" href="#features">Tìm hiểu nền tảng <span>↓</span></a>
@@ -125,7 +104,7 @@ export default function HomePage({ onNavigate }: Props) {
           <p>Từ lúc tiếp nhận hình ảnh đến khi hoàn tất đánh giá, các công cụ được sắp xếp để đội ngũ dễ theo dõi công việc và thông tin cần thiết.</p>
         </div>
         <div className="feature-grid">
-          {features.map((feature) => (
+          {features.map(feature => (
             <article className="feature-card" key={feature.number}>
               <div className="feature-card-top"><span className={`feature-icon ${feature.tone}`}>{feature.icon}</span><span className="feature-number">{feature.number} / 04</span></div>
               <h3>{feature.title}</h3><p>{feature.copy}</p>
@@ -137,17 +116,17 @@ export default function HomePage({ onNavigate }: Props) {
 
       <section className="workflow-section" id="workflow">
         <div className="workflow-inner">
-          <div className="workflow-intro"><div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> HỖ TRỢ TỪ ĐẦU ĐẾN CUỐI</div><h2>Một quy trình.<br /><span>Một góc nhìn chung.</span></h2><p>Thiết kế quy trình để thông tin chuyển tiếp mạch lạc, đồng thời giữ chuyên môn của bác sĩ ở trung tâm mọi quyết định.</p><button className="button button-light" onClick={() => onNavigate("auth-doctor")}>Vào cổng bác sĩ <Arrow /></button></div>
+          <div className="workflow-intro"><div className="eyebrow eyebrow-light"><span className="eyebrow-dot" /> HỖ TRỢ TỪ ĐẦU ĐẾN CUỐI</div><h2>Một quy trình.<br /><span>Một góc nhìn xuyên suốt.</span></h2><p>Từng bước được kết nối để thông tin luôn rõ ràng và đội ngũ y tế chủ động phối hợp.</p></div>
           <div className="workflow-steps">{steps.map((step, index) => <div className="workflow-step" key={step.title}><div className="step-marker"><span>0{index + 1}</span>{index < steps.length - 1 && <i />}</div><div><h3>{step.title}</h3><p>{step.detail}</p></div></div>)}</div>
           <div className="workflow-decoration">N<span>+</span></div>
         </div>
       </section>
 
       <section className="closing-section section-wrap" id="about">
-        <div className="closing-card"><div className="closing-sun" /><div className="closing-content"><div className="eyebrow"><span className="eyebrow-dot" /> NEURASCAN AI</div><h2>Công nghệ hỗ trợ.<br /><span>Con người quyết định.</span></h2><p>Nền tảng được xây dựng để hỗ trợ công việc chuyên môn và cải thiện khả năng theo dõi ca bệnh. Mọi kết quả cần được nhân viên y tế đánh giá trong bối cảnh lâm sàng phù hợp.</p><button className="button button-primary button-large" onClick={() => onNavigate("auth-doctor")}>Bắt đầu với NeuraScan <Arrow /></button></div><div className="closing-art" aria-hidden="true"><div className="art-ring ring-a" /><div className="art-ring ring-b" /><div className="art-cross">+</div><span>CARE<br />WITH<br />CLARITY</span></div></div>
+        <div className="closing-card"><div className="closing-sun" /><div className="closing-content"><div className="eyebrow"><span className="eyebrow-dot" /> NEURASCAN AI</div><h2>Công nghệ đồng hành.<br /><span>Chuyên môn dẫn đường.</span></h2><p>Một nền tảng hỗ trợ đội ngũ y tế làm việc tập trung, có tổ chức và luôn đặt quyết định chuyên môn ở trung tâm.</p><button className="button button-primary" onClick={() => onNavigate("auth-doctor")}>Vào cổng bác sĩ <Arrow /></button></div></div>
       </section>
 
-      <footer className="landing-footer"><a className="brand footer-brand" href="#home"><Mark className="brand-mark" /><span>NeuraScan<span className="brand-accent">AI</span></span></a><p>Hỗ trợ quy trình chăm sóc thần kinh có trách nhiệm.</p><div className="footer-links"><button onClick={() => onNavigate("auth-doctor")}>Cổng bác sĩ</button><button onClick={() => onNavigate("auth-admin")}>Quản trị</button><a href="#about">Thông tin nền tảng</a></div><span className="footer-copy">© 2025 NeuraScan AI</span></footer>
+      <footer className="landing-footer"><a className="brand footer-brand" href="#home"><Mark className="brand-mark" /><span>NeuraScan<span className="brand-accent">AI</span></span></a><p>Hỗ trợ chuyên môn thần kinh · Công nghệ vì chăm sóc tốt hơn</p><span>© 2026 NeuraScan AI</span></footer>
     </main>
   );
 }
