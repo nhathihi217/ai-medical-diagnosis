@@ -24,8 +24,12 @@ export default function App() {
 
   if (page === "auth-doctor") return <AuthPage role="doctor" onLogin={handleLogin} onBack={() => setPage("home")} />;
   if (page === "auth-admin") return <AuthPage role="admin" onLogin={handleLogin} onBack={() => setPage("home")} />;
-  if (page === "doctor" && currentUser) return <DoctorPortal user={currentUser} onBack={handleLogout} />;
-  if (page === "admin" && currentUser) return <AdminPortal user={currentUser} onBack={handleLogout} />;
+  if (page === "doctor" && currentUser) {
+    return <div className="portal-shell"><DoctorPortal user={currentUser} onBack={handleLogout} /></div>;
+  }
+  if (page === "admin" && currentUser) {
+    return <div className="portal-shell"><AdminPortal user={currentUser} onBack={handleLogout} /></div>;
+  }
 
   return (
     <>
