@@ -1,11 +1,9 @@
 import { useState } from "react";
 import HomePage from "./pages/HomePage";
+import DoctorPortal from "./pages/DoctorPortal";
 import AdminPortal from "./pages/AdminPortal";
-import LiveAuthPage from "./pages/LiveAuthPage";
-import LiveDoctorPortal from "./pages/LiveDoctorPortal";
-import { logout, sessionUser } from "./services/api";
+import AuthPage from "./pages/AuthPage";
 import type { User } from "./data/mockData";
-import "./portal-theme.css";
 
 export type Page = "home" | "auth-doctor" | "auth-admin" | "doctor" | "admin";
 
@@ -18,15 +16,14 @@ export default function App() {
     setPage(user.role === "admin" ? "admin" : "doctor");
   }
 
-  async function handleLogout() {
-    try { await logout(); } catch { /* Leave the UI logged out even if the server is unreachable. */ }
+  function handleLogout() {
     setCurrentUser(null);
     setPage("home");
   }
 
-  if (page === "auth-doctor") return <LiveAuthPage role="doctor" onLogin={handleLogin} onBack={() => setPage("home")} />;
-  if (page === "auth-admin") return <LiveAuthPage role="admin" onLogin={handleLogin} onBack={() => setPage("home")} />;
-  if (page === "doctor" && currentUser) return <div className="portal-shell"><LiveDoctorPortal user={currentUser} onBack={() => void handleLogout()} /></div>;
-  if (page === "admin" && currentUser) return <div className="portal-shell"><AdminPortal user={currentUser} onBack={() => void handleLogout()} /></div>;
+  if (page === "auth-doctor") return <AuthPage role="doctor" onLogin={handleLogin} onBack={() => setPage("home")} />;
+  if (page === "auth-admin") return <AuthPage role="admin" onLogin={handleLogin} onBack={() => setPage("home")} />;
+  if (page === "doctor" && currentUser) return <DoctorPortal user={currentUser} onBack={handleLogout} />;
+  if (page === "admin" && currentUser) return <AdminPortal user={currentUser} onBack={handleLogout} />;
   return <HomePage onNavigate={setPage} />;
 }
