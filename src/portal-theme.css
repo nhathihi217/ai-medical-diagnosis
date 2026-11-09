@@ -1,0 +1,268 @@
+/* Light, calm clinical theme for the doctor and admin workspaces. */
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) {
+  --portal-ink: #17343a;
+  --portal-muted: #647a79;
+  --portal-teal: #087f75;
+  --portal-teal-dark: #075d58;
+  --portal-paper: #f5f8f5;
+  --portal-line: #dce7e2;
+  min-height: 100vh;
+  color: var(--portal-ink) !important;
+  background:
+    radial-gradient(ellipse at 92% 8%, rgba(8, 127, 117, 0.075), transparent 25rem),
+    var(--portal-paper) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: var(--portal-line) !important;
+  box-shadow: 0 8px 28px rgba(23, 52, 58, 0.055);
+  backdrop-filter: blur(16px);
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:first-child {
+  min-height: 68px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:first-child > span.font-display {
+  color: var(--portal-ink);
+  font-size: 19px;
+  letter-spacing: -0.5px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:first-child > button:first-child {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--portal-line);
+  border-radius: 10px;
+  background: white;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:nth-child(2) {
+  gap: 5px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:nth-child(2) > button {
+  margin: 5px 3px 0 0;
+  padding: 10px 15px;
+  border-bottom-width: 2px;
+  border-radius: 9px 9px 0 0;
+  font-weight: 600;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:nth-child(2) > button:hover {
+  background: #edf5f1;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main {
+  width: min(100% - 48px, 1180px);
+  padding-top: 38px;
+  padding-bottom: 56px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main h2 {
+  color: var(--portal-ink);
+  letter-spacing: -0.6px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main [class*="border-[#1a2e4a]"] {
+  border-color: var(--portal-line) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#04091a]"] {
+  background-color: var(--portal-paper) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#0b1229]"] {
+  background-color: #fff !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="text-[#e8edf5]"] {
+  color: var(--portal-ink) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="text-[#94aec8]"] {
+  color: #526b68 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="text-[#64849e]"] {
+  color: #718581 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="text-[#0ea5e9]"] {
+  color: var(--portal-teal) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#0ea5e9]"] {
+  background-color: var(--portal-teal) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="border-[#0ea5e9]"] {
+  border-color: var(--portal-teal) !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main [class*="rounded-xl"][class*="border"] {
+  border-color: var(--portal-line) !important;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(23, 52, 58, 0.035);
+  transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main [class*="cursor-pointer"][class*="rounded-xl"]:hover {
+  border-color: rgba(8, 127, 117, 0.38) !important;
+  box-shadow: 0 10px 26px rgba(23, 52, 58, 0.075);
+  transform: translateY(-1px);
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main table {
+  width: 100%;
+  color: var(--portal-ink);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main thead {
+  background: #f2f7f4;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main th {
+  background: #f2f7f4;
+  color: #718581 !important;
+  font-size: 10px;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main td,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main th {
+  border-color: #e5ede8;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main tbody tr:hover {
+  background-color: #f4f8f5 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) input,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) select,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) textarea {
+  color: var(--portal-ink) !important;
+  background-color: #fff !important;
+  border-color: #d5e2dc !important;
+  border-radius: 9px;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) input:focus,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) select:focus,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) textarea:focus {
+  border-color: var(--portal-teal) !important;
+  outline: 3px solid rgba(8, 127, 117, 0.12);
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) input::placeholder,
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) textarea::placeholder {
+  color: #93a39e !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="hover:bg-[#0b1229]"]:hover {
+  background-color: #f0f7f3 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#22c55e]/5"] {
+  background-color: #eef8f1 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#ef4444]/5"] {
+  background-color: #fff3f0 !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) [class*="bg-[#f97316]/5"] {
+  background-color: #fff5ed !important;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) button {
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+#root > div.min-h-screen.flex.flex-col:has(header.sticky) main button[class*="bg-[#0ea5e9]"]:hover {
+  background-color: var(--portal-teal-dark) !important;
+  box-shadow: 0 6px 16px rgba(8, 127, 117, 0.18);
+  transform: translateY(-1px);
+}
+
+.home-admin-entry {
+  position: fixed;
+  z-index: 60;
+  right: max(24px, calc((100vw - 1168px) / 2));
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 17px;
+  border: 1px solid rgba(8, 127, 117, 0.22);
+  border-radius: 999px;
+  color: #fff;
+  background: #087f75;
+  box-shadow: 0 10px 28px rgba(8, 127, 117, 0.22);
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.home-admin-entry:hover {
+  transform: translateY(-2px);
+  background: #075d58;
+  box-shadow: 0 14px 32px rgba(8, 127, 117, 0.28);
+}
+
+.home-admin-entry svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 640px) {
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) main {
+    width: calc(100% - 32px);
+    padding-top: 24px;
+    padding-bottom: 36px;
+  }
+
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:first-child {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:nth-child(2) {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) header.sticky > div:nth-child(2) > button {
+    padding: 9px 11px;
+    font-size: 12px;
+  }
+
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) main table {
+    min-width: 760px;
+  }
+
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) main:has(table) {
+    overflow-x: auto;
+  }
+
+  .home-admin-entry {
+    right: 16px;
+    bottom: 16px;
+    min-height: 44px;
+    padding: 0 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root > div.min-h-screen.flex.flex-col:has(header.sticky) *,
+  .home-admin-entry {
+    transition: none !important;
+  }
+}
