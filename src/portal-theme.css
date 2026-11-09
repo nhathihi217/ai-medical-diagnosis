@@ -6,11 +6,42 @@
   --portal-teal-dark: #075d58;
   --portal-paper: #f5f8f5;
   --portal-line: #dce7e2;
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   color: var(--portal-ink);
   background:
     radial-gradient(ellipse at 92% 8%, rgba(8, 127, 117, 0.075), transparent 25rem),
     var(--portal-paper);
+}
+
+/* Soft medical-inspired artwork behind the workspace, drawn in CSS/SVG so it always loads. */
+.portal-shell::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at 8% 30%, rgba(180, 218, 204, 0.24), transparent 30rem),
+    radial-gradient(ellipse at 95% 78%, rgba(191, 226, 218, 0.25), transparent 27rem),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420' fill='none'%3E%3Cg stroke='%23087f75' stroke-opacity='.07' stroke-width='1.2'%3E%3Cpath d='M210 50c-42 0-76 34-76 76 0 19 7 36 19 49-20 12-33 34-33 59 0 38 31 69 69 69h42c38 0 69-31 69-69 0-25-13-47-33-59 12-13 19-30 19-49 0-42-34-76-76-76Z'/%3E%3Cpath d='M210 74v205M171 94c-13 20-10 45 8 59m-28 44c21-3 38 6 50 24m48-127c13 20 10 45-8 59m28 44c-21-3-38 6-50 24M150 140l-25-11m145 11 25-11M137 226l-28 8m174-8 28 8M178 300l-13 27m70-27 13 27'/%3E%3C/g%3E%3C/svg%3E");
+  background-position: left top, right bottom, right 7% top 120px;
+  background-repeat: no-repeat;
+  background-size: auto, auto, min(34vw, 420px);
+  opacity: .8;
+}
+
+.portal-shell::after {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image: radial-gradient(rgba(8, 127, 117, .11) .7px, transparent .7px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(110deg, transparent 10%, #000 100%);
+  opacity: .22;
 }
 
 /* The app shell is nested inside .portal-shell; scope to that actual DOM. */
@@ -74,9 +105,14 @@
   letter-spacing: -0.6px;
 }
 
+.portal-shell main h2:not(:empty) {
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.15;
+}
+
 /* Recolor the existing Tailwind dashboard utilities without changing behavior. */
 .portal-shell [class*="bg-[#04091a]"] { background-color: var(--portal-paper) !important; }
-.portal-shell [class*="bg-[#0b1229]"] { background-color: #fff !important; }
+.portal-shell [class*="bg-[#0b1229]"] { background-color: rgba(255, 255, 255, .92) !important; }
 .portal-shell [class*="border-[#1a2e4a]"] { border-color: var(--portal-line) !important; }
 .portal-shell [class*="text-[#e8edf5]"] { color: var(--portal-ink) !important; }
 .portal-shell [class*="text-[#94aec8]"] { color: #526b68 !important; }
@@ -212,6 +248,7 @@
     padding-bottom: 36px;
   }
 
+  .portal-shell::before { background-size: auto, auto, 240px; background-position: left top, right bottom, right -70px top 130px; }
   .portal-shell > .min-h-screen header.sticky > div:first-child { padding: 0 16px; }
   .portal-shell > .min-h-screen header.sticky > div:nth-child(2) { padding: 0 12px; }
   .portal-shell > .min-h-screen header.sticky > div:nth-child(2) > button { padding: 9px 11px; font-size: 12px; }
