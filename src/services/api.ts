@@ -19,12 +19,33 @@ function field(record: JsonRecord, ...keys: string[]): unknown {
   return undefined;
 }
 
+function getApiErrorMessage(status: number, body: unknown, statusText: string): string {
+  const raw = typeof body === "string"
+    ? body
+    : isRecord(body)
+      ? String(field(body, "message", "title", "detail") ?? "")
+      : "";
+
+  // ASP.NET Development's exception page may contain stack traces and request headers/cookies.
+  // Never expose or render that response body in the UI.
+  if (/AmbiguousMatchException|matched multiple endpoints/i.test(raw)) {
+    return "Backend bị trùng route GET /api/Queue (AmbiguousMatchException). Nhờ người phụ trách backend gán route riêng cho từng action; frontend không thể lấy hàng đợi cho tới khi API được sửa.";
+  }
+  if (status === 401) return "Sai tên đăng nhập hoặc mật khẩu, hoặc phiên đăng nhập đã hết hạn.";
+  if (status >= 500) return `Máy chủ API gặp lỗi (${status}). Kiểm tra log backend; chi tiết lỗi máy chủ đã được ẩn.`;
+  if (status === 404) return "Không tìm thấy API hoặc dữ liệu yêu cầu (404). Kiểm tra endpoint và ID Ca.";
+
+  // Only surface short, plain-text client errors; omit HTML and oversized server responses.
+  const plainMessage = raw.trim();
+  if (plainMessage && plainMessage.length <= 240 && !/<[^>]+>/.test(plainMessage)) return plainMessage;
+  return `Yêu cầu API thất bại (${status})${statusText ? `: ${statusText}` : "."}`;
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
-      // In local development /api is proxied by Vite, so the auth cookie is same-origin.
       credentials: "include",
       headers: { ...(init.body ? { "Content-Type": "application/json" } : {}), ...init.headers },
     });
@@ -37,10 +58,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   if (text) {
     try { body = JSON.parse(text); } catch { body = text; }
   }
-  if (!response.ok) {
-    const message = typeof body === "string" ? body : isRecord(body) ? String(field(body, "message", "title", "detail") ?? response.statusText) : response.statusText;
-    throw new ApiError(message || `Yêu cầu thất bại (${response.status}).`, response.status);
-  }
+  if (!response.ok) throw new ApiError(getApiErrorMessage(response.status, body, response.statusText), response.status);
   return body as T;
 }
 
@@ -74,7 +92,6 @@ function parseReviewStatus(value: unknown): ReviewStatus {
   const normalized = status.toLowerCase();
   if (normalized.includes("denied") || normalized.includes("reject")) return "rejected";
   if (normalized.includes("confirm") || normalized === "approved") return "confirmed";
-  // PBL6's Done status means inference is complete and awaits doctor review.
   return "pending";
 }
 
@@ -112,7 +129,6 @@ export async function getDashboardCases(): Promise<DashboardCase[]> {
 }
 
 export async function getCaseDetails(id: number): Promise<DashboardCase> {
-  // CaseDto omits Id and Images, so preserve the requested ID and render fields the DTO provides.
   return mapApiCase(await request<unknown>(`/api/Case/${id}`), id);
 }
 
