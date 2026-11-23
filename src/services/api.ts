@@ -15,7 +15,9 @@ function isRecord(value: unknown): value is JsonRecord {
 }
 
 function field(record: JsonRecord, ...keys: string[]): unknown {
-  for (const key of keys) if (record[key] !== undefined && record[key] !== null) return record[key];
+  for (const key of keys) {
+    if (record[key] !== undefined && record[key] !== null) return record[key];
+  }
   return undefined;
 }
 
@@ -26,16 +28,15 @@ function getApiErrorMessage(status: number, body: unknown, statusText: string): 
       ? String(field(body, "message", "title", "detail") ?? "")
       : "";
 
-  // ASP.NET Development's exception page may contain stack traces and request headers/cookies.
-  // Never expose or render that response body in the UI.
+  // Do not display ASP.NET exception pages: they can contain stack traces and request details.
   if (/AmbiguousMatchException|matched multiple endpoints/i.test(raw)) {
-    return "Backend bị trùng route GET /api/Queue (AmbiguousMatchException). Nhờ người phụ trách backend gán route riêng cho từng action; frontend không thể lấy hàng đợi cho tới khi API được sửa.";
+    return "Backend trả lỗi định tuyến API. Kiểm tra route của endpoint trong backend và thử lại.";
   }
   if (status === 401) return "Sai tên đăng nhập hoặc mật khẩu, hoặc phiên đăng nhập đã hết hạn.";
-  if (status >= 500) return `Máy chủ API gặp lỗi (${status}). Kiểm tra log backend; chi tiết lỗi máy chủ đã được ẩn.`;
-  if (status === 404) return "Không tìm thấy API hoặc dữ liệu yêu cầu (404). Kiểm tra endpoint và ID Ca.";
+  if (status === 403) return "Tài khoản không có quyền thực hiện thao tác này.";
+  if (status >= 500) return `Máy chủ API gặp lỗi (${status}). Chi tiết lỗi máy chủ đã được ẩn.`;
+  if (status === 404) return "Không tìm thấy API hoặc dữ liệu yêu cầu (404). Kiểm tra endpoint và mã Ca.";
 
-  // Only surface short, plain-text client errors; omit HTML and oversized server responses.
   const plainMessage = raw.trim();
   if (plainMessage && plainMessage.length <= 240 && !/<[^>]+>/.test(plainMessage)) return plainMessage;
   return `Yêu cầu API thất bại (${status})${statusText ? `: ${statusText}` : "."}`;
@@ -47,10 +48,13 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
       credentials: "include",
-      headers: { ...(init.body ? { "Content-Type": "application/json" } : {}), ...init.headers },
+      headers: {
+        ...(init.body && !(init.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
+        ...init.headers,
+      },
     });
   } catch {
-    throw new ApiError("Không kết nối được API. Hãy chạy backend tại http://localhost:5134 hoặc cấu hình VITE_API_BASE_URL.");
+    throw new ApiError("Không kết nối được API. Chạy backend và kiểm tra VITE_API_PROXY_TARGET hoặc VITE_API_BASE_URL.");
   }
 
   const text = response.status === 204 ? "" : await response.text();
@@ -62,9 +66,12 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   return body as T;
 }
 
-/** Backend AuthController accepts LoginDto { Name, Password } and returns an empty 200 with a cookie. */
+/** AuthController expects { Name, Password } and sets an authentication cookie on success. */
 export async function login(name: string, password: string): Promise<void> {
-  await request<void>("/api/Auth/login", { method: "POST", body: JSON.stringify({ Name: name, Password: password }) });
+  await request<void>("/api/Auth/login", {
+    method: "POST",
+    body: JSON.stringify({ Name: name, Password: password }),
+  });
 }
 
 export async function logout(): Promise<void> {
@@ -72,7 +79,6 @@ export async function logout(): Promise<void> {
 }
 
 export interface DashboardCase extends Case {
-  /** Backend CaseDto currently does not serialize Id; this is supplied by manual detail lookup. */
   apiId?: number;
 }
 
@@ -92,6 +98,7 @@ function parseReviewStatus(value: unknown): ReviewStatus {
   const normalized = status.toLowerCase();
   if (normalized.includes("denied") || normalized.includes("reject")) return "rejected";
   if (normalized.includes("confirm") || normalized === "approved") return "confirmed";
+  // PBL6's Done status means model processing is complete and the case awaits clinician review.
   return "pending";
 }
 
@@ -102,41 +109,74 @@ export function mapApiCase(value: unknown, fallbackId?: number): DashboardCase {
   const imagesValue = field(record, "images", "Images", "scans", "Scans");
   const images = Array.isArray(imagesValue) ? imagesValue : [];
   const rawId = field(record, "id", "Id", "caseId", "CaseId") ?? fallbackId;
-  const status = field(record, "reviewStatus", "ReviewStatus", "status", "Status");
+  const apiId = typeof rawId === "number"
+    ? rawId
+    : typeof rawId === "string" && /^\d+$/.test(rawId) ? Number(rawId) : undefined;
 
   return {
-    id: rawId === undefined ? "" : String(rawId),
-    apiId: typeof rawId === "number" ? rawId : typeof rawId === "string" && /^\d+$/.test(rawId) ? Number(rawId) : undefined,
+    id: rawId === undefined ? "—" : String(rawId),
+    apiId,
     created_at: String(field(record, "createdAt", "CreatedAt", "created_at") ?? ""),
     priority_level: parsePriority(field(record, "priorityLevel", "PriorityLevel", "priority_level")),
-    review_status: parseReviewStatus(status),
+    review_status: parseReviewStatus(field(record, "reviewStatus", "ReviewStatus", "status", "Status")),
     reviewed_at: field(record, "reviewedAt", "ReviewedAt") as string | undefined,
     doctor_note: String(field(record, "note", "Note", "doctorNote") ?? "") || undefined,
     patient_name: String(field(patient, "name", "Name", "fullName", "FullName") ?? "") || undefined,
     scan_count: images.length,
     scans: images.map((image, index) => {
       const scan = isRecord(image) ? image : {};
-      return { id: String(field(scan, "id", "Id") ?? `scan-${index}`), case_id: String(rawId ?? ""), file_path: String(field(scan, "filePath", "FilePath", "file_path") ?? ""), uploaded_by: String(field(scan, "uploaderId", "UploaderId") ?? ""), uploaded_at: "", status: "done" as const };
+      return {
+        id: String(field(scan, "id", "Id") ?? `scan-${index}`),
+        case_id: String(rawId ?? ""),
+        file_path: String(field(scan, "filePath", "FilePath", "file_path") ?? ""),
+        uploaded_by: String(field(scan, "uploaderId", "UploaderId") ?? ""),
+        uploaded_at: "",
+        status: "done" as const,
+      };
     }),
   };
 }
 
+function responseRows(response: unknown): unknown[] {
+  if (Array.isArray(response)) return response;
+  if (isRecord(response)) {
+    const rows = field(response, "items", "cases", "data");
+    if (Array.isArray(rows)) return rows;
+  }
+  throw new ApiError("API Queue trả về dữ liệu không đúng định dạng.");
+}
+
+/** PBL6 exposes named queue routes; ProcDone is the model-complete review queue. */
 export async function getDashboardCases(): Promise<DashboardCase[]> {
-  const response = await request<unknown>("/api/Queue");
-  const rows = Array.isArray(response) ? response : isRecord(response) && Array.isArray(field(response, "items", "cases", "data")) ? field(response, "items", "cases", "data") as unknown[] : null;
-  if (!rows) throw new ApiError("API Queue trả về dữ liệu không đúng định dạng.");
-  return rows.map(item => mapApiCase(item));
+  const response = await request<unknown>("/api/Queue/ProcDone");
+  return responseRows(response).map(item => mapApiCase(item));
 }
 
 export async function getCaseDetails(id: number): Promise<DashboardCase> {
   return mapApiCase(await request<unknown>(`/api/Case/${id}`), id);
 }
 
+/**
+ * PBL6 has approve/deny POST routes. Its current backend implementation does not
+ * persist Deny, and Approve sets status to Done rather than Confirmed; see README.
+ */
 export async function submitCaseReview(id: number, decision: "confirmed" | "rejected", note: string): Promise<void> {
-  await request<void>(`/api/Case/${id}/${decision === "confirmed" ? "approve" : "deny"}`, { method: "POST", body: JSON.stringify(note) });
+  await request<void>(`/api/Case/${id}/${decision === "confirmed" ? "approve" : "deny"}`, {
+    method: "POST",
+    body: JSON.stringify(note),
+  });
 }
 
-/** Login returns no user object; role is the portal selected by the user. */
+/** Login currently returns no user profile, so use the entered name and selected portal for display only. */
 export function sessionUser(name: string, role: "doctor" | "admin"): User {
-  return { id: name, username: name, full_name: name, role, department: "", shift_status: "off_duty", is_active: true, created_at: new Date().toISOString() };
+  return {
+    id: name,
+    username: name,
+    full_name: name,
+    role,
+    department: "",
+    shift_status: "off_duty",
+    is_active: true,
+    created_at: new Date().toISOString(),
+  };
 }

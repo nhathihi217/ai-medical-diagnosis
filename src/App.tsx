@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import HomePage from "./pages/HomePage";
-import DoctorPortal from "./pages/DoctorPortal";
+import LiveDoctorPortal from "./pages/LiveDoctorPortal";
 import AdminPortal from "./pages/AdminPortal";
-import AuthPage from "./pages/AuthPage";
+import LiveAuthPage from "./pages/LiveAuthPage";
 import type { User } from "./data/mockData";
 import "./portal-theme.css";
 
@@ -51,9 +51,9 @@ export default function App() {
 
   const toggleTheme = () => setTheme(value => value === "light" ? "dark" : "light");
 
-  if (page === "auth-doctor") return <AuthPage role="doctor" onLogin={handleLogin} onBack={() => setPage("home")} />;
-  if (page === "auth-admin") return <AuthPage role="admin" onLogin={handleLogin} onBack={() => setPage("home")} />;
-  if (page === "doctor" && currentUser) return <PortalShell theme={theme} onToggleTheme={toggleTheme}><DoctorPortal user={currentUser} onBack={handleLogout} /></PortalShell>;
+  if (page === "auth-doctor") return <LiveAuthPage role="doctor" onLogin={handleLogin} onBack={() => setPage("home")} />;
+  if (page === "auth-admin") return <LiveAuthPage role="admin" onLogin={handleLogin} onBack={() => setPage("home")} />;
+  if (page === "doctor" && currentUser) return <PortalShell theme={theme} onToggleTheme={toggleTheme}><LiveDoctorPortal user={currentUser} onBack={handleLogout} /></PortalShell>;
   if (page === "admin" && currentUser) return <PortalShell theme={theme} onToggleTheme={toggleTheme}><AdminPortal user={currentUser} onBack={handleLogout} /></PortalShell>;
   return <HomePage onNavigate={setPage} />;
 }
